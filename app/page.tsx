@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -39,13 +40,13 @@ function writeScores(entries: ScoreEntry[]) {
   window.localStorage.setItem(SCORE_KEY, JSON.stringify(pruned));
 }
 
-export function addScore(entry: ScoreEntry) {
+function addScore(entry: ScoreEntry) {
   const current = readScores();
   current.push(entry);
   writeScores(current);
 }
 
-export function clearAllScores() {
+function clearAllScores() {
   if (typeof window === "undefined") return;
   window.localStorage.removeItem(SCORE_KEY);
 }
@@ -214,7 +215,7 @@ function MainPage() {
   );
 }
 
-function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
     <div
       className={`relative rounded-2xl border border-emerald-900/10 dark:border-emerald-100/10 bg-white/80 dark:bg-emerald-950/60 shadow-lg backdrop-blur-md overflow-hidden ${className}`}
