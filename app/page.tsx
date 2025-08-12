@@ -3,13 +3,20 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+const serifHeadline = { fontFamily: "'Playfair Display', Georgia, 'Times New Roman', serif" } as const;
+const handDisplay = { fontFamily: "'Gloria Hallelujah', 'Comic Sans MS', cursive" } as const;
+const sansBody = {
+  fontFamily:
+    "system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji'",
+} as const;
+
 export default function Home() {
   const [showSplash, setShowSplash] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSplash(false);
-    }, 3500);
+    }, 14200);
     return () => clearTimeout(timer);
   }, []);
 
@@ -25,64 +32,95 @@ export default function Home() {
 }
 
 function Splash({ onDone }: { onDone: () => void }) {
-  useEffect(() => {
-    const t = setTimeout(onDone, 3600);
-    return () => clearTimeout(t);
-  }, [onDone]);
-
   return (
     <motion.section
       className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden"
       initial={{ opacity: 1 }}
+      animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.9, ease: "easeInOut" }}
+      transition={{ duration: 0.8, ease: "easeInOut" }}
     >
+      {/* Background image with vignette and subtle parallax noise */}
       <div
         className="absolute inset-0 bg-center bg-cover"
         style={{
           backgroundImage:
-            "url('https://media.cnn.com/api/v1/images/stellar/prod/140702154952-02-forrest-gump-restricted.jpg?q=w_2434,h_1631,x_0,y_0,c_fill')",
+            "url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=2940&auto=format&fit=crop')",
         }}
       />
-      <div className="absolute inset-0 bg-emerald-900/40" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-emerald-950/35 to-black/60" />
+      <div className="pointer-events-none absolute inset-6 rounded-[40px] ring-1 ring-white/10 shadow-[inset_0_0_120px_rgba(0,0,0,0.45)]" />
       <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 1, ease: "easeOut" }}
-        className="text-center px-6"
+        className="absolute -inset-20 opacity-30"
+        initial={{ scale: 1.05 }}
+        animate={{ scale: [1.05, 1.08, 1.05] }}
+        transition={{ duration: 6, repeat: Infinity }}
+        style={{ backgroundImage: "radial-gradient(circle at 30% 20%, rgba(16,185,129,.25), transparent 45%), radial-gradient(circle at 70% 80%, rgba(56,189,248,.2), transparent 40%)" }}
+      />
+      <motion.div
+        initial={{ y: 12, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.9, ease: "easeOut" }}
+        className="text-center px-6 max-w-3xl mx-auto"
       >
         <motion.h1
-          className="font-display text-5xl md:text-7xl text-emerald-900 dark:text-emerald-100 drop-shadow-sm"
+          className="text-5xl md:text-7xl text-white drop-shadow-[0_8px_24px_rgba(16,185,129,0.35)]"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.25, duration: 0.8 }}
+          transition={{ delay: 0.35, duration: 0.9, ease: "easeOut" }}
+          style={serifHeadline}
         >
-          Forrest Gump
+          Run, Forrest, Run!
         </motion.h1>
         <motion.p
-          className="mt-4 text-lg md:text-2xl text-emerald-800/80 dark:text-emerald-200/80"
+          className="mt-4 text-xl md:text-3xl text-emerald-50/90 z-10"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: .45, duration: 3.1 }}
+          transition={{ delay: 4, duration: 2.4}}
+          style={serifHeadline}
         >
-          &ldquo;Life is like a box of chocolates...&rdquo;
+          “Life is like a box of chocolates.”
         </motion.p>
         <motion.div
           className="mt-10 flex justify-center"
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.9, duration: 0.8 }}
+          transition={{ delay: 1.1, duration: 0.7, ease: "easeOut" }}
         >
           <div className="relative">
             <motion.div
-              className="absolute -inset-2 rounded-full bg-emerald-300/50 blur-2xl"
-              animate={{ opacity: [0.3, 0.7, 0.3] }}
-              transition={{ duration: 2.4, repeat: Infinity }}
+              className="absolute -inset-2 rounded-full bg-emerald-400/40 blur-2xl"
+              animate={{ opacity: [0.25, 0.7, 0.25] }}
+              transition={{ duration: 2.6, repeat: Infinity }}
             />
-            <span className="relative z-10 font-hand text-2xl md:text-3xl bg-white/80 dark:bg-emerald-900/60 text-emerald-900 dark:text-emerald-50 px-6 py-3 rounded-full shadow-lg">
-              Welcome, no passwords needed this time. 
+            <span
+              className="relative z-10 text-lg md:text-xl bg-white/80 dark:bg-emerald-900/60 text-emerald-900 dark:text-emerald-50 px-6 py-3 rounded-full shadow-lg"
+              style={sansBody}
+            >
+              Start running....
             </span>
           </div>
+        </motion.div>
+        <motion.div
+          className="mt-8 flex justify-center"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.5, duration: 0.6 }}
+        >
+          <motion.button
+            onClick={onDone}
+            className="group relative inline-flex items-center gap-2 rounded-full bg-emerald-500 px-6 py-3 text-white shadow-lg hover:bg-emerald-600 active:scale-95 transition"
+            whileTap={{ scale: 0.96 }}
+          >
+            <span style={sansBody}>Start</span>
+            <motion.span
+              initial={{ x: 0 }}
+              animate={{ x: [0, 6, 0] }}
+              transition={{ duration: 1.8, repeat: Infinity }}
+            >
+              ➜
+            </motion.span>
+          </motion.button>
         </motion.div>
       </motion.div>
     </motion.section>
@@ -93,11 +131,11 @@ function MainPage() {
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 md:py-12">
       <header className="mb-8 md:mb-12 text-center">
-        <h2 className="font-display text-3xl md:text-5xl text-emerald-900 dark:text-emerald-100">
+        <h2 className="text-3xl md:text-5xl text-emerald-900 dark:text-emerald-100" style={serifHeadline}>
           Run, Forrest, Run!
         </h2>
-        <p className="mt-3 text-emerald-800/80 dark:text-emerald-200/80">
-          Settle in for movie night with snacks, a quick game, and a classic clip.
+        <p className="mt-3 text-emerald-800/80 dark:text-emerald-200/80" style={sansBody}>
+          Settle in for movie night with snacks, and a quick game
         </p>
       </header>
 
@@ -187,10 +225,10 @@ function Notebook() {
       <div className="flex items-start gap-4">
         <div className="w-1.5 h-full bg-emerald-400 rounded-full" />
         <div className="flex-1">
-          <h3 className="font-display text-2xl text-emerald-900 dark:text-emerald-100">
+          <h3 className="text-2xl text-emerald-900 dark:text-emerald-100" style={serifHeadline}>
             Movie Night Notebook
           </h3>
-          <p className="text-emerald-800/80 dark:text-emerald-200/80 mt-1">
+          <p className="text-emerald-800/80 dark:text-emerald-200/80 mt-1" style={sansBody}>
             Snack ideas inspired by Forrest Gump ✨
           </p>
 
@@ -211,14 +249,14 @@ function Notebook() {
                       onClick={() => toggle(s.id)}
                       className="w-full text-left flex items-start justify-between gap-3"
                     >
-                      <span className="font-hand text-xl text-emerald-900 dark:text-emerald-100">
+                      <span className="text-xl text-emerald-900 dark:text-emerald-100" style={handDisplay}>
                         {s.title}
                       </span>
                       <span className="text-xs uppercase tracking-wide text-emerald-700/60 dark:text-emerald-200/60">
                         {isOpen ? "hide" : "view"}
                       </span>
                     </button>
-                    <p className="mt-1 text-emerald-800/80 dark:text-emerald-200/80">
+                    <p className="mt-1 text-emerald-800/80 dark:text-emerald-200/80" style={sansBody}>
                       {s.note}
                     </p>
                     <AnimatePresence initial={false}>
@@ -231,13 +269,13 @@ function Notebook() {
                           className="overflow-hidden"
                         >
                           {"ingredients" in s ? (
-                            <ul className="mt-3 list-disc pl-5 text-emerald-800/90 dark:text-emerald-200/90">
+                            <ul className="mt-3 list-disc pl-5 text-emerald-800/90 dark:text-emerald-200/90" style={sansBody}>
                               {s.ingredients.map((ing) => (
                                 <li key={ing}>{ing}</li>
                               ))}
                             </ul>
                           ) : (
-                            <ol className="mt-3 list-decimal pl-5 text-emerald-800/90 dark:text-emerald-200/90">
+                            <ol className="mt-3 list-decimal pl-5 text-emerald-800/90 dark:text-emerald-200/90" style={sansBody}>
                               {s.recipe?.map((step) => (
                                 <li key={step} className="mb-1">
                                   {step}
@@ -303,11 +341,11 @@ function MiniGame() {
     <Card className="md:h-[360px]">
       <div className="flex items-start justify-between">
         <div>
-          <h3 className="font-display text-2xl text-emerald-900 dark:text-emerald-100">
+          <h3 className="text-2xl text-emerald-900 dark:text-emerald-100" style={serifHeadline}>
             Catch the Feather
           </h3>
-          <p className="text-emerald-800/80 dark:text-emerald-200/80 mt-1">
-            Click the drifting feather to score points before time runs out. Click, retards...click!
+          <p className="text-emerald-800/80 dark:text-emerald-200/80 mt-1" style={sansBody}>
+            Click the drifting feather to score points before time runs out.
           </p>
         </div>
         <button
@@ -377,10 +415,10 @@ function VideoPlayer() {
   return (
     <Card className="">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="font-display text-2xl text-emerald-900 dark:text-emerald-100">
+        <h3 className="text-2xl text-emerald-900 dark:text-emerald-100" style={serifHeadline}>
           Forrest Gump 🎞️
         </h3>
-        <span className="text-sm text-emerald-800/70 dark:text-emerald-200/70">
+        <span className="text-sm text-emerald-800/70 dark:text-emerald-200/70" style={sansBody}>
           movie night
         </span>
       </div>

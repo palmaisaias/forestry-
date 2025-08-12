@@ -38,7 +38,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} ${gloria.variable} antialiased font-sans`}
+        className={`${geistSans.className} ${geistMono.variable} ${playfair.variable} ${gloria.variable} antialiased`}
       >
         {children}
       </body>
