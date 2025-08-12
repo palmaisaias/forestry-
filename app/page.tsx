@@ -61,7 +61,7 @@ function Splash({ onDone }: { onDone: () => void }) {
         initial={{ y: 12, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.9, ease: "easeOut" }}
-        className="text-center px-6 max-w-3xl mx-auto"
+        className="relative z-50 text-center px-6 max-w-3xl mx-auto"
       >
         <motion.h1
           className="text-5xl md:text-7xl text-white drop-shadow-[0_8px_24px_rgba(16,185,129,0.35)]"
@@ -72,15 +72,12 @@ function Splash({ onDone }: { onDone: () => void }) {
         >
           Run, Forrest, Run!
         </motion.h1>
-        <motion.p
-          className="mt-4 text-xl md:text-3xl text-emerald-50/90 z-10"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 4, duration: 2.4}}
-          style={serifHeadline}
-        >
-          “Life is like a box of chocolates.”
-        </motion.p>
+<p
+  className="mt-4 text-xl md:text-3xl text-emerald-50/90 z-10"
+  style={serifHeadline}
+>
+  “Life is like a box of chocolates.”
+</p>
         <motion.div
           className="mt-10 flex justify-center"
           initial={{ scale: 0.95, opacity: 0 }}
