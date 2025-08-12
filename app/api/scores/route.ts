@@ -43,34 +43,15 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    if (!isAllowedOrigin(req)) {
-      return NextResponse.json({ ok: false, error: "forbidden" }, { status: 403 });
-    }
-
     const body = await req.json();
     const name = String(body?.name || "").trim().slice(0, 40);
-    const points = Math.max(0, Math.min(9999, Number(body?.points)));
-    if (!name || !Number.isFinite(points)) {
+    const points = Number(body?.points);
+    if (!name || !Number.isFinite(points) || points < 0) {
       return NextResponse.json({ ok: false, error: "bad_input" }, { status: 400 });
     }
-
-    // Very light rate limit: max 3 submissions per 10 seconds per IP
-    const ip = getClientIp(req);
-    const ipHash = hashIp(ip);
-    const { rows: [{ count }] } = await sql`
-      select count(*)::int as count
-      from scores
-      where ip_hash = ${ipHash}
-        and created_at > now() - interval '10 seconds'
-    `;
-    if (count >= 3) {
-      return NextResponse.json({ ok: false, error: "rate_limited" }, { status: 429 });
-    }
-
-    await sql`insert into scores (name, points, ip_hash) values (${name}, ${points}, ${ipHash})`;
+    await sql`insert into scores (name, points) values (${name}, ${points})`;
     return NextResponse.json({ ok: true }, { status: 201 });
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json({ ok: false, error: "db_error" }, { status: 500 });
+  } catch (err: any) {
+    return NextResponse.json({ ok: false, error: String(err?.message || "db_error") }, { status: 500 });
   }
 }
