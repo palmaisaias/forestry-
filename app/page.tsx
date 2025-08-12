@@ -43,10 +43,9 @@ function Splash({ onDone }: { onDone: () => void }) {
       {/* Background image with vignette and subtle parallax noise */}
       <div
         className="absolute inset-0 bg-center bg-cover"
-        style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=2940&auto=format&fit=crop')",
-        }}
+style={{
+  backgroundImage: "url('/runner.png')",
+}}
       />
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-emerald-950/35 to-black/60" />
       <div className="pointer-events-none absolute inset-6 rounded-[40px] ring-1 ring-white/10 shadow-[inset_0_0_120px_rgba(0,0,0,0.45)]" />
@@ -73,7 +72,7 @@ function Splash({ onDone }: { onDone: () => void }) {
           Run, Forrest, Run!
         </motion.h1>
 <p
-  className="mt-4 text-xl md:text-3xl text-emerald-50/90 z-10"
+  className="mt-4 text-xl md:text-3xl text-emerald-50/90 z-50"
   style={serifHeadline}
 >
   “Life is like a box of chocolates.”
@@ -94,7 +93,7 @@ function Splash({ onDone }: { onDone: () => void }) {
               className="relative z-10 text-lg md:text-xl bg-white/80 dark:bg-emerald-900/60 text-emerald-900 dark:text-emerald-50 px-6 py-3 rounded-full shadow-lg"
               style={sansBody}
             >
-              Start running....
+              "Women love a man in uniform… until he rolls in." - Lt. Dan
             </span>
           </div>
         </motion.div>
@@ -342,7 +341,7 @@ function MiniGame() {
             Catch the Feather
           </h3>
           <p className="text-emerald-800/80 dark:text-emerald-200/80 mt-1" style={sansBody}>
-            Click the drifting feather to score points before time runs out.
+            Click the drifting feather to score points before time runs out. Click, click, click retards.
           </p>
         </div>
         <button
