@@ -4,53 +4,9 @@ import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// --- Simple local (device-only) scoreboard helpers for last 24 hours ---
-type ScoreEntry = { name: string; score: number; ts: number };
-const SCORE_KEY = "feather_scores_v1";
-const DAY_MS = 24 * 60 * 60 * 1000;
-
-function readScores(): ScoreEntry[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(SCORE_KEY);
-    const arr = raw ? JSON.parse(raw) : [];
-    const now = Date.now();
-    // validate and prune older than 24h
-    const valid = Array.isArray(arr)
-      ? arr.filter(
-          (e) =>
-            e &&
-            typeof e.name === "string" &&
-            typeof e.score === "number" &&
-            typeof e.ts === "number" &&
-            now - e.ts <= DAY_MS
-        )
-      : [];
-    return valid;
-  } catch {
-    return [];
-  }
-}
-
-function writeScores(entries: ScoreEntry[]) {
-  if (typeof window === "undefined") return;
-  // Always prune on write
-  const now = Date.now();
-  const pruned = entries.filter((e) => now - e.ts <= DAY_MS);
-  window.localStorage.setItem(SCORE_KEY, JSON.stringify(pruned));
-}
-
-function addScore(entry: ScoreEntry) {
-  const current = readScores();
-  current.push(entry);
-  writeScores(current);
-}
-
-function clearAllScores() {
-  if (typeof window === "undefined") return;
-  window.localStorage.removeItem(SCORE_KEY);
-}
-// --- End helpers ---
+// --- Server scoreboard types ---
+type ScoreRow = { name: string; points: number; created_at: string };
+// --- End server types ---
 
 const serifHeadline = { fontFamily: "'Playfair Display', Georgia, 'Times New Roman', serif" } as const;
 const handDisplay = { fontFamily: "'Gloria Hallelujah', 'Comic Sans MS', cursive" } as const;
@@ -92,9 +48,9 @@ function Splash({ onDone }: { onDone: () => void }) {
       {/* Background image with vignette and subtle parallax noise */}
       <div
         className="absolute inset-0 bg-center bg-cover"
-style={{
-  backgroundImage: "url('/runner.png')",
-}}
+        style={{
+          backgroundImage: "url('/runner.png')",
+        }}
       />
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-emerald-950/35 to-black/60" />
       <div className="pointer-events-none absolute inset-6 rounded-[40px] ring-1 ring-white/10 shadow-[inset_0_0_120px_rgba(0,0,0,0.45)]" />
@@ -120,12 +76,9 @@ style={{
         >
           Run, Forrest, Run!
         </motion.h1>
-<p
-  className="mt-4 text-xl md:text-3xl text-emerald-50/90 z-50"
-  style={serifHeadline}
->
-  “Life is like a box of chocolates.”
-</p>
+        <p className="mt-4 text-xl md:text-3xl text-emerald-50/90 z-50" style={serifHeadline}>
+          “Life is like a box of chocolates.”
+        </p>
         <motion.div
           className="mt-10 flex justify-center"
           initial={{ scale: 0.95, opacity: 0 }}
@@ -173,19 +126,30 @@ style={{
 }
 
 function MainPage() {
-  const [scores, setScores] = useState<ScoreEntry[]>([]);
+  const [scores, setScores] = useState<ScoreRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  async function refreshScores() {
+    try {
+      setError(null);
+      const res = await fetch("/api/scores", { cache: "no-store" });
+      const data = await res.json();
+      if (!res.ok || !data?.ok) throw new Error(data?.error || `HTTP ${res.status}`);
+      setScores(data.scores as ScoreRow[]);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-    setScores(readScores());
+    void refreshScores();
   }, []);
 
   function handleNewScore() {
-    setScores(readScores());
-  }
-
-  function handleClearScores() {
-    clearAllScores();
-    setScores([]);
+    void refreshScores();
   }
 
   return (
@@ -205,7 +169,7 @@ function MainPage() {
       </section>
 
       <section className="mt-8 md:mt-10">
-        <Scoreboard scores={scores} onClear={handleClearScores} />
+        <Scoreboard scores={scores} loading={loading} error={error} />
       </section>
 
       <section className="mt-8 md:mt-10">
@@ -227,84 +191,84 @@ function Card({ children, className = "" }: { children: ReactNode; className?: s
 }
 
 function Notebook() {
-const snacks = [
-  {
-    id: "raquel-burnout-bites",
-    title: "Raquel’s Burnout Bites",
-    note: "Sweet and golden… like her hair before it met bleach.",
-    recipe: [
-      "Melt white chocolate until smooth.",
-      "Mix in toasted coconut flakes for a ‘crispy fried’ look.",
-      "Scoop into clusters and chill until set.",
-      "Serve with financial advice nobody asked for.",
-    ],
-  },
-  {
-    id: "rebecca-ultra-sandwiches",
-    title: "Rebecca’s Marriott Mini Clubs",
-    note: "Perfectly layered like her events, best enjoyed with a cold Ultra.",
-    ingredients: [
-      "Mini slider buns",
-      "Turkey, bacon, lettuce, tomato",
-      "Garlic aioli",
-      "Michelob Ultra (optional… but is it really?)",
-    ],
-  },
-  {
-    id: "diana-vincent-veggie-platter",
-    title: "Diana’s Vincent Veggie Platter",
-    note: "Colorful, fresh, and better for you than unemployment stress snacks.",
-    ingredients: [
-      "Carrot sticks",
-      "Cucumber slices",
-      "Cherry tomatoes",
-      "Hummus or ranch dip",
-    ],
-  },
-  {
-    id: "mary-artsy-tarts",
-    title: "Mary’s Artsy Tarts",
-    note: "Interview-ready on the outside, creative chaos on the inside.",
-    recipe: [
-      "Fill mini tart shells with lemon curd or jam.",
-      "Top with edible flowers or chocolate shavings.",
-      "Serve while discussing the Target dress code and sculpting techniques.",
-    ],
-  },
-  {
-    id: "mia-pizza-affair-rolls",
-    title: "Mia’s Pizza Affair Rolls",
-    note: "A Little Caesars flavor… with a side of scandal.",
-    recipe: [
-      "Roll out pizza dough into rectangles.",
-      "Fill with mozzarella, pepperoni, and marinara.",
-      "Roll, slice, and bake until golden.",
-      "Serve with a wink and an ‘it’s complicated’ status.",
-    ],
-  },
-  {
-    id: "gammy-bulletproof-brisket-bites",
-    title: "Gammy’s Bulletproof Brisket Bites",
-    note: "Tender enough to survive a ricochet. Literally.",
-    recipe: [
-      "Slow cook brisket with onions, garlic, and BBQ sauce for 6–8 hrs.",
-      "Shred and pile onto toasted Hawaiian rolls.",
-      "Top with pickles and coleslaw.",
-      "Tell everyone the ‘scar story’ only if they bring beer.",
-    ],
-  },
-  {
-    id: "xochitl-alexander-duo-dogs",
-    title: "Xochitl & Alexander’s Duo Dogs",
-    note: "One bun for mom, one bun for the 5-year-old CEO of doing nothing.",
-    recipe: [
-      "Grill hot dogs and toast buns.",
-      "Top mom’s with onions, jalapeños, and mustard.",
-      "Top Alexander’s with ketchup and shredded cheese.",
-      "Serve with juice boxes and insurance paperwork.",
-    ],
-  },
-] as const;
+  const snacks = [
+    {
+      id: "raquel-burnout-bites",
+      title: "Raquel’s Burnout Bites",
+      note: "Sweet and golden… like her hair before it met bleach.",
+      recipe: [
+        "Melt white chocolate until smooth.",
+        "Mix in toasted coconut flakes for a ‘crispy fried’ look.",
+        "Scoop into clusters and chill until set.",
+        "Serve with financial advice nobody asked for.",
+      ],
+    },
+    {
+      id: "rebecca-ultra-sandwiches",
+      title: "Rebecca’s Marriott Mini Clubs",
+      note: "Perfectly layered like her events, best enjoyed with a cold Ultra.",
+      ingredients: [
+        "Mini slider buns",
+        "Turkey, bacon, lettuce, tomato",
+        "Garlic aioli",
+        "Michelob Ultra (optional… but is it really?)",
+      ],
+    },
+    {
+      id: "diana-vincent-veggie-platter",
+      title: "Diana’s Vincent Veggie Platter",
+      note: "Colorful, fresh, and better for you than unemployment stress snacks.",
+      ingredients: [
+        "Carrot sticks",
+        "Cucumber slices",
+        "Cherry tomatoes",
+        "Hummus or ranch dip",
+      ],
+    },
+    {
+      id: "mary-artsy-tarts",
+      title: "Mary’s Artsy Tarts",
+      note: "Interview-ready on the outside, creative chaos on the inside.",
+      recipe: [
+        "Fill mini tart shells with lemon curd or jam.",
+        "Top with edible flowers or chocolate shavings.",
+        "Serve while discussing the Target dress code and sculpting techniques.",
+      ],
+    },
+    {
+      id: "mia-pizza-affair-rolls",
+      title: "Mia’s Pizza Affair Rolls",
+      note: "A Little Caesars flavor… with a side of scandal.",
+      recipe: [
+        "Roll out pizza dough into rectangles.",
+        "Fill with mozzarella, pepperoni, and marinara.",
+        "Roll, slice, and bake until golden.",
+        "Serve with a wink and an ‘it’s complicated’ status.",
+      ],
+    },
+    {
+      id: "gammy-bulletproof-brisket-bites",
+      title: "Gammy’s Bulletproof Brisket Bites",
+      note: "Tender enough to survive a ricochet. Literally.",
+      recipe: [
+        "Slow cook brisket with onions, garlic, and BBQ sauce for 6–8 hrs.",
+        "Shred and pile onto toasted Hawaiian rolls.",
+        "Top with pickles and coleslaw.",
+        "Tell everyone the ‘scar story’ only if they bring beer.",
+      ],
+    },
+    {
+      id: "xochitl-alexander-duo-dogs",
+      title: "Xochitl & Alexander’s Duo Dogs",
+      note: "One bun for mom, one bun for the 5-year-old CEO of doing nothing.",
+      recipe: [
+        "Grill hot dogs and toast buns.",
+        "Top mom’s with onions, jalapeños, and mustard.",
+        "Top Alexander’s with ketchup and shredded cheese.",
+        "Serve with juice boxes and insurance paperwork.",
+      ],
+    },
+  ] as const;
 
   const [openIds, setOpenIds] = useState<Set<string>>(new Set());
   function toggle(id: string) {
@@ -412,13 +376,30 @@ function MiniGame({ onNewScore }: { onNewScore: () => void }) {
 
   useEffect(() => {
     if (!isRunning && timeLeft === 0) {
-      const name = (typeof window !== "undefined"
-        ? window.prompt("Enter your name for the scoreboard:")
-        : null) || "";
+      const name =
+        (typeof window !== "undefined"
+          ? window.prompt("Enter your name for the scoreboard:")
+          : null) || "";
       const trimmed = name.trim();
       if (trimmed) {
-        addScore({ name: trimmed, score, ts: Date.now() });
-        onNewScore();
+        (async () => {
+          try {
+            const res = await fetch("/api/scores", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ name: trimmed, points: score }),
+            });
+            if (!res.ok) {
+              // eslint-disable-next-line no-console
+              console.error("POST /api/scores failed:", await res.text());
+            }
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error("POST error:", e);
+          } finally {
+            onNewScore(); // refresh whether or not POST succeeded
+          }
+        })();
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -455,7 +436,7 @@ function MiniGame({ onNewScore }: { onNewScore: () => void }) {
             Catch the Feather
           </h3>
           <p className="text-emerald-800/80 dark:text-emerald-200/80 mt-1" style={sansBody}>
-            Click the drifting feather to score points before time runs out. Click, click, click retards.
+            Click the drifting feather to score points before time runs out.
           </p>
         </div>
         <button
@@ -501,12 +482,14 @@ function MiniGame({ onNewScore }: { onNewScore: () => void }) {
 
 function Scoreboard({
   scores,
-  onClear,
+  loading,
+  error,
 }: {
-  scores: ScoreEntry[];
-  onClear: () => void;
+  scores: ScoreRow[];
+  loading: boolean;
+  error: string | null;
 }) {
-  const top = [...scores].sort((a, b) => b.score - a.score).slice(0, 12);
+  const top = [...scores].sort((a, b) => b.points - a.points).slice(0, 12);
 
   return (
     <Card>
@@ -514,46 +497,50 @@ function Scoreboard({
         <h3 className="text-2xl text-emerald-900 dark:text-emerald-100" style={serifHeadline}>
           Scoreboard (last 24 hours)
         </h3>
-        <button
-          onClick={onClear}
-          className="text-xs rounded-full border px-3 py-1 border-emerald-900/20 dark:border-emerald-100/20 text-emerald-800/80 dark:text-emerald-200/80 hover:bg-emerald-50/60 dark:hover:bg-emerald-900/40"
-          style={sansBody}
-          title="Clears scores stored on this device"
-        >
-          Clear (this device)
-        </button>
       </div>
 
       <div className="max-h-56 overflow-y-auto pr-1">
-        <ol className="space-y-2">
-          {top.length === 0 && (
-            <li className="text-sm text-emerald-800/70 dark:text-emerald-200/70" style={sansBody}>
-              No scores yet. Play a round and add your name when time hits 0.
-            </li>
-          )}
-          {top.map((e, i) => (
-            <li
-              key={e.name + e.ts}
-              className="flex items-center justify-between rounded-lg border border-emerald-900/10 dark:border-emerald-100/10 bg-white/70 dark:bg-emerald-900/40 px-3 py-2"
-            >
-              <div className="flex items-center gap-3">
-                <span className="w-6 text-right text-sm font-semibold text-emerald-700/80 dark:text-emerald-200/80">
-                  {i + 1}.
+        {loading && (
+          <p className="text-sm text-emerald-800/70 dark:text-emerald-200/70" style={sansBody}>
+            Loading scores…
+          </p>
+        )}
+        {error && !loading && (
+          <p className="text-sm text-red-700/80 dark:text-red-300/80" style={sansBody}>
+            Couldn’t load scores: {error}
+          </p>
+        )}
+        {!loading && !error && (
+          <ol className="space-y-2">
+            {top.length === 0 && (
+              <li className="text-sm text-emerald-800/70 dark:text-emerald-200/70" style={sansBody}>
+                No scores yet. Play a round and add your name when time hits 0.
+              </li>
+            )}
+            {top.map((e, i) => (
+              <li
+                key={e.name + e.created_at}
+                className="flex items-center justify-between rounded-lg border border-emerald-900/10 dark:border-emerald-100/10 bg-white/70 dark:bg-emerald-900/40 px-3 py-2"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="w-6 text-right text-sm font-semibold text-emerald-700/80 dark:text-emerald-200/80">
+                    {i + 1}.
+                  </span>
+                  <span className="text-emerald-900 dark:text-emerald-100" style={handDisplay}>
+                    {e.name}
+                  </span>
+                </div>
+                <span className="text-emerald-800/80 dark:text-emerald-200/80" style={sansBody}>
+                  {e.points}
                 </span>
-                <span className="text-emerald-900 dark:text-emerald-100" style={handDisplay}>
-                  {e.name}
-                </span>
-              </div>
-              <span className="text-emerald-800/80 dark:text-emerald-200/80" style={sansBody}>
-                {e.score}
-              </span>
-            </li>
-          ))}
-        </ol>
+              </li>
+            ))}
+          </ol>
+        )}
       </div>
 
       <p className="mt-3 text-xs text-emerald-700/60 dark:text-emerald-200/60" style={sansBody}>
-        Scores are saved locally on the device that played. To make this shared across devices you will need a small backend.
+        Scores update live from the server and reset automatically after 24 hours.
       </p>
     </Card>
   );
@@ -606,4 +593,3 @@ function VideoPlayer() {
     </Card>
   );
 }
-
