@@ -63,7 +63,7 @@ function Splash({ onDone }: { onDone: () => void }) {
           className="mt-4 text-lg md:text-2xl text-emerald-800/80 dark:text-emerald-200/80"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.45, duration: 0.8 }}
+          transition={{ delay: .45, duration: 3.1 }}
         >
           &ldquo;Life is like a box of chocolates...&rdquo;
         </motion.p>
@@ -378,7 +378,7 @@ function VideoPlayer() {
     <Card className="">
       <div className="flex items-center justify-between mb-3">
         <h3 className="font-display text-2xl text-emerald-900 dark:text-emerald-100">
-          Classic Clip
+          Forrest Gump 🎞️
         </h3>
         <span className="text-sm text-emerald-800/70 dark:text-emerald-200/70">
           Simple video player
@@ -391,7 +391,7 @@ function VideoPlayer() {
           controls
           poster="/vercel.svg"
         >
-          <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4" />
+          <source src="https://lemon-squeezy.sfo3.cdn.digitaloceanspaces.com/gumpy.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       </div>
