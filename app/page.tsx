@@ -191,7 +191,7 @@ function Notebook() {
             Movie Night Notebook
           </h3>
           <p className="text-emerald-800/80 dark:text-emerald-200/80 mt-1">
-            Handwritten snack ideas inspired by Forrest Gump.
+            Snack ideas inspired by Forrest Gump ✨
           </p>
 
           <div className="mt-4 max-h-60 md:max-h-64 overflow-y-auto pr-1 scroll-area">
@@ -307,7 +307,7 @@ function MiniGame() {
             Catch the Feather
           </h3>
           <p className="text-emerald-800/80 dark:text-emerald-200/80 mt-1">
-            Click the drifting feather to score points before time runs out.
+            Click the drifting feather to score points before time runs out. Click, retards...click!
           </p>
         </div>
         <button
@@ -381,7 +381,7 @@ function VideoPlayer() {
           Forrest Gump 🎞️
         </h3>
         <span className="text-sm text-emerald-800/70 dark:text-emerald-200/70">
-          Simple video player
+          movie night
         </span>
       </div>
 
