@@ -80,7 +80,7 @@ function Splash({ onDone }: { onDone: () => void }) {
               transition={{ duration: 2.4, repeat: Infinity }}
             />
             <span className="relative z-10 font-hand text-2xl md:text-3xl bg-white/80 dark:bg-emerald-900/60 text-emerald-900 dark:text-emerald-50 px-6 py-3 rounded-full shadow-lg">
-              Welcome to the Forrest Gump Experience
+              Welcome, no passwords needed this time. 
             </span>
           </div>
         </motion.div>
