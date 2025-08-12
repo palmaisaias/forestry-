@@ -159,52 +159,84 @@ function Card({ children, className = "" }: { children: React.ReactNode; classNa
 }
 
 function Notebook() {
-  const snacks = [
-    {
-      id: "chocolates",
-      title: "Chocolate Assortment",
-      note: "A box of assorted chocolates. No peeking at the map!",
-      ingredients: [
-        "Milk, dark, and white chocolate pieces",
-        "Caramel centers",
-        "Hazelnut praline",
-        "Strawberry cream",
-      ],
-    },
-    {
-      id: "shrimp",
-      title: "Bubba Gump Shrimp Trio",
-      note: "Grilled, fried, and garlic butter shrimp — Bubba-approved.",
-      recipe: [
-        "Season peeled shrimp with salt, pepper, and paprika.",
-        "Skillet 1: Sauté with garlic and butter, finish with parsley.",
-        "Skillet 2: Grill on skewers 2–3 min/side.",
-        "Skillet 3: Dredge in flour and pan-fry until golden.",
-      ],
-    },
-    {
-      id: "popcorn",
-      title: "Feather Popcorn",
-      note: "Light and fluffy with a touch of butter and chives.",
-      ingredients: [
-        "Popcorn kernels",
-        "Butter, melted",
-        "Sea salt",
-        "Finely chopped chives",
-      ],
-    },
-    {
-      id: "sweet-tea",
-      title: "Sweet Tea Lemonade",
-      note: "Half sweet tea, half lemonade, all Southern charm.",
-      recipe: [
-        "Steep black tea bags in hot water 5–7 minutes.",
-        "Stir in sugar while warm; cool completely.",
-        "Mix equal parts tea and lemonade over ice.",
-        "Garnish with lemon wheels and mint.",
-      ],
-    },
-  ] as const;
+const snacks = [
+  {
+    id: "raquel-burnout-bites",
+    title: "Raquel’s Burnout Bites",
+    note: "Sweet and golden… like her hair before it met bleach.",
+    recipe: [
+      "Melt white chocolate until smooth.",
+      "Mix in toasted coconut flakes for a ‘crispy fried’ look.",
+      "Scoop into clusters and chill until set.",
+      "Serve with financial advice nobody asked for.",
+    ],
+  },
+  {
+    id: "rebecca-ultra-sandwiches",
+    title: "Rebecca’s Marriott Mini Clubs",
+    note: "Perfectly layered like her events, best enjoyed with a cold Ultra.",
+    ingredients: [
+      "Mini slider buns",
+      "Turkey, bacon, lettuce, tomato",
+      "Garlic aioli",
+      "Michelob Ultra (optional… but is it really?)",
+    ],
+  },
+  {
+    id: "diana-vincent-veggie-platter",
+    title: "Diana’s Vincent Veggie Platter",
+    note: "Colorful, fresh, and better for you than unemployment stress snacks.",
+    ingredients: [
+      "Carrot sticks",
+      "Cucumber slices",
+      "Cherry tomatoes",
+      "Hummus or ranch dip",
+    ],
+  },
+  {
+    id: "mary-artsy-tarts",
+    title: "Mary’s Artsy Tarts",
+    note: "Interview-ready on the outside, creative chaos on the inside.",
+    recipe: [
+      "Fill mini tart shells with lemon curd or jam.",
+      "Top with edible flowers or chocolate shavings.",
+      "Serve while discussing the Target dress code and sculpting techniques.",
+    ],
+  },
+  {
+    id: "mia-pizza-affair-rolls",
+    title: "Mia’s Pizza Affair Rolls",
+    note: "A Little Caesars flavor… with a side of scandal.",
+    recipe: [
+      "Roll out pizza dough into rectangles.",
+      "Fill with mozzarella, pepperoni, and marinara.",
+      "Roll, slice, and bake until golden.",
+      "Serve with a wink and an ‘it’s complicated’ status.",
+    ],
+  },
+  {
+    id: "gammy-bulletproof-brisket-bites",
+    title: "Gammy’s Bulletproof Brisket Bites",
+    note: "Tender enough to survive a ricochet. Literally.",
+    recipe: [
+      "Slow cook brisket with onions, garlic, and BBQ sauce for 6–8 hrs.",
+      "Shred and pile onto toasted Hawaiian rolls.",
+      "Top with pickles and coleslaw.",
+      "Tell everyone the ‘scar story’ only if they bring beer.",
+    ],
+  },
+  {
+    id: "xochitl-alexander-duo-dogs",
+    title: "Xochitl & Alexander’s Duo Dogs",
+    note: "One bun for mom, one bun for the 5-year-old CEO of doing nothing.",
+    recipe: [
+      "Grill hot dogs and toast buns.",
+      "Top mom’s with onions, jalapeños, and mustard.",
+      "Top Alexander’s with ketchup and shredded cheese.",
+      "Serve with juice boxes and insurance paperwork.",
+    ],
+  },
+] as const;
 
   const [openIds, setOpenIds] = useState<Set<string>>(new Set());
   function toggle(id: string) {
