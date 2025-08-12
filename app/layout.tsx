@@ -25,9 +25,31 @@ const gloria = Gloria_Hallelujah({
 });
 
 export const metadata: Metadata = {
-  title: "Forrest Gump Experience",
+  title: "Forrest Gump",
   description:
-    "A beautiful landing and interactive main page inspired by Forrest Gump.",
+    "A movie about retards, the disabled, and AIDS ridden",
+  openGraph: {
+    title: "Forrest Gump",
+    description:
+      "A movie about retards, the disabled, and AIDS ridden",
+    images: [
+      {
+        url: "https://cdnb.artstation.com/p/assets/images/images/027/222/707/large/julia-solaris-3.jpg?1590941520",
+        width: 1200,
+        height: 630,
+        alt: "Forrest Gump running on a country road",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Forrest Gump",
+    description:
+      "A movie about retards, the disabled, and AIDS ridden",
+    images: [
+      "https://cdnb.artstation.com/p/assets/images/images/027/222/707/large/julia-solaris-3.jpg?1590941520",
+    ],
+  },
 };
 
 export default function RootLayout({
