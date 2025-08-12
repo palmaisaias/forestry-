@@ -93,7 +93,7 @@ style={{
               className="relative z-10 text-lg md:text-xl bg-white/80 dark:bg-emerald-900/60 text-emerald-900 dark:text-emerald-50 px-6 py-3 rounded-full shadow-lg"
               style={sansBody}
             >
-              "Women love a man in uniform… until he rolls in." - Lt. Dan
+              Women love a man in uniform… until he rolls in. - Lt. Dan
             </span>
           </div>
         </motion.div>
